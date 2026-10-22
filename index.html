@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Expanding Transcatheter Valve — Anatomy Jig</title>
+<meta name="description" content="Stylized 34-second motion study of a self-expanding nitinol transcatheter valve: capsule pullback, radial seating in a calcified root, pericardial leaflet coaptation, and pulsatile flow. Not a medical device.">
+<style>
+  :root {
+    --ink: #0B0D13;
+    --teal: #00F5D4;
+    --ivory: #FFF1E6;
+    --coral: #FF5A5F;
+    --gold: #E4C36A;
+    --bone: #E6E0D8;
+    --mute: #9A918A;
+    --line: rgba(230, 224, 216, 0.16);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; background: var(--ink); color: var(--bone); }
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    font-family: "Avenir Next", "Segoe UI", Helvetica, sans-serif;
+  }
+  header, footer { padding: 14px 22px 12px; }
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 16px;
+    align-items: end;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--mute); }
+  .brand b { color: var(--bone); font-weight: 600; }
+  h1 { margin: 0; text-align: center; font-size: 18px; font-weight: 560; letter-spacing: 0.08em; text-transform: uppercase; }
+  .sub { margin: 3px 0 0; text-align: center; color: var(--mute); font-size: 12px; letter-spacing: 0.08em; }
+  .timecode { text-align: right; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+  .timecode .tc { font-size: 22px; color: var(--ivory); letter-spacing: 0.06em; }
+  .timecode .fr { color: var(--mute); font-size: 11px; letter-spacing: 0.14em; }
+  main { position: relative; min-height: 280px; }
+  canvas { width: 100%; height: 100%; display: block; background: var(--ink); cursor: pointer; }
+  #err { position: absolute; left: 16px; bottom: 12px; color: var(--coral); font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+  footer { border-top: 1px solid var(--line); display: grid; gap: 10px; }
+  .transport { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; }
+  button {
+    background: transparent; color: var(--bone); border: 1px solid var(--line);
+    border-radius: 999px; padding: 8px 16px; font: inherit; letter-spacing: 0.14em;
+    text-transform: uppercase; font-size: 11px; cursor: pointer;
+  }
+  button:hover, button:focus-visible { border-color: var(--teal); color: var(--teal); outline: none; }
+  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 22px; background: transparent; cursor: pointer; }
+  input[type="range"]:focus-visible { outline: 1px solid var(--teal); outline-offset: 2px; }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold) 0 14.7%, var(--teal) 14.7% 29.4%, var(--coral) 29.4% 50%, var(--ivory) 50% 73.5%, #8E243C 73.5% 100%);
+  }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; margin-top: -5px; border-radius: 50%; background: var(--ivory); border: 0; }
+  input[type="range"]::-moz-range-track { height: 2px; background: var(--line); }
+  input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--ivory); }
+  .phases { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .phases button { border-radius: 6px; text-align: left; padding: 8px 10px; letter-spacing: 0.08em; line-height: 1.35; }
+  .phases button.on { border-color: var(--teal); color: var(--ivory); }
+  .phases small { display: block; color: var(--mute); letter-spacing: 0.04em; text-transform: none; font-size: 11px; }
+  .phases button.on small { color: var(--teal); }
+  .meta { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; align-items: end; }
+  .detail { max-width: 68ch; color: var(--mute); font-size: 13px; line-height: 1.45; margin: 0; }
+  .detail strong { color: var(--bone); font-weight: 600; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute); }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .fine { margin: 0; color: var(--mute); font-size: 11px; line-height: 1.4; }
+  @media (max-width: 800px) {
+    header { grid-template-columns: 1fr; gap: 6px; }
+    .timecode, h1, .sub { text-align: left; }
+    .phases { grid-template-columns: 1fr; }
+    .transport { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Kinetic Gain<br><b>Motion study</b></div>
+  <div>
+    <h1>Self-expanding transcatheter valve</h1>
+    <p class="sub">Anatomy jig · 34.0 s · 1,020 frames · 30 fps</p>
+  </div>
+  <div class="timecode">
+    <div class="tc" id="tc">00:00:00</div>
+    <div class="fr" id="fr">FRAME 0000 / 1019</div>
+  </div>
+</header>
+<main>
+  <canvas id="film" aria-label="Stylized deployment animation of a self-expanding transcatheter heart valve"></canvas>
+  <div id="err" role="status"></div>
+</main>
+<footer>
+  <div class="transport">
+    <button id="play" type="button">Play</button>
+    <input id="scrub" type="range" min="0" max="1019" value="0" aria-label="Timeline">
+    <button id="replay" type="button">Replay</button>
+  </div>
+  <div class="phases" id="phases"></div>
+  <div class="meta">
+    <p class="detail" id="detail"></p>
+    <div class="legend">
+      <span><i style="background:#00F5D4"></i>Nitinol</span>
+      <span><i style="background:#FFF1E6"></i>Pericardium</span>
+      <span><i style="background:#FF5A5F"></i>Plaque</span>
+      <span><i style="background:#E4C36A"></i>Markers</span>
+    </div>
+  </div>
+  <p class="fine" id="metric"></p>
+  <p class="fine">Stylized educational motion study. Not a medical device, not a patient case, and not a named commercial valve. Coronary ostia are drawn lateral to the frame. Coaptation and annular contact are picture decisions, not a performance claim.</p>
+</footer>
+<script>
+(function () {
+  const FPS = 30;
+  const LAST = 1019;
+  const COLS = 18;
+  const ROWS = 12;
+  const CUSP = 3;
+  const OSTIA = [{ ang: -0.55, z: 0.56 }, { ang: Math.PI + 0.55, z: 0.54 }];
+  const INK = "#0B0D13";
+  const TEAL = "#00F5D4";
+  const IVORY = "#FFF1E6";
+  const CORAL = "#FF5A5F";
+  const GOLD = "#E4C36A";
+  const PHASES = [
+    { f: 0, key: "01", name: "Axial alignment", time: "0.0–5.0s", detail: "Oblique axial view. A 14-French catheter crosses the stenotic valve. Gold marker bands slide onto the annular plane and settle." },
+    { f: 150, key: "02", name: "Capsule pullback", time: "5.0–10.0s", detail: "The outer capsule retracts toward the aorta. Uncovered nitinol leaves the crimped diameter and the diamond cells widen." },
+    { f: 300, key: "03", name: "Radial expansion", time: "10.0–17.0s", detail: "Cutaway of the root. The frame finishes seating, pins calcified cusps into the sinuses, and stays lateral to the coronary ostia." },
+    { f: 510, key: "04", name: "Leaflet coaptation", time: "17.0–25.0s", detail: "Down-bore view. Three pericardial cusps open in systole and meet at the center in diastole." },
+    { f: 750, key: "05", name: "Hemodynamic sweep", time: "25.0–34.0s", detail: "The camera dollies back into a three-quarter section. Pulsatile streamlines move from the ventricular side through the prosthetic lumen." }
+  ];
+  const KEYS = [
+    { f: 0, eye: [0.34, -0.48, 3.7], target: [0, 0, 0.02], up: [0, 1, 0], zoom: 0.30, focal: 1.05, ortho: 0.22, clip: 0 },
+    { f: 150, eye: [0.55, -0.72, 3.35], target: [0, 0, 0.02], up: [0, 1, 0], zoom: 0.31, focal: 1.02, ortho: 0.16, clip: 0 },
+    { f: 300, eye: [1.35, -1.05, 2.55], target: [0, 0, 0.12], up: [0, 0.75, 0.35], zoom: 0.30, focal: 0.98, ortho: 0.04, clip: 0.2 },
+    { f: 348, eye: [0.08, 4.15, 0.32], target: [0, 0, 0.22], up: [0, 0.15, 1], zoom: 0.30, focal: 1.15, ortho: 0.78, clip: 1 },
+    { f: 510, eye: [0.02, 3.85, 0.28], target: [0, 0, 0.18], up: [0, 0.12, 1], zoom: 0.33, focal: 1.18, ortho: 0.86, clip: 1 },
+    { f: 548, eye: [0.02, -0.02, 3.25], target: [0, 0, 0.16], up: [0, 1, 0], zoom: 0.36, focal: 1.12, ortho: 1, clip: 0 },
+    { f: 750, eye: [0.0, 0.02, 2.7], target: [0, 0, 0.16], up: [0, 1, 0], zoom: 0.40, focal: 1.08, ortho: 1, clip: 0 },
+    { f: 1020, eye: [1.85, 2.15, 2.55], target: [0, 0, 0.18], up: [0, 0.12, 1], zoom: 0.38, focal: 1.32, ortho: 0.22, clip: 1 }
+  ];
+
+  const canvas = document.getElementById("film");
+  const ctx = canvas.getContext("2d", { alpha: false });
+  const tcEl = document.getElementById("tc");
+  const frEl = document.getElementById("fr");
+  const detailEl = document.getElementById("detail");
+  const metricEl = document.getElementById("metric");
+  const playBtn = document.getElementById("play");
+  const replayBtn = document.getElementById("replay");
+  const scrub = document.getElementById("scrub");
+  const errEl = document.getElementById("err");
+  const phaseHost = document.getElementById("phases");
+  const params = new URLSearchParams(location.search);
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let frame = clamp(intParam("f", 0), 0, LAST);
+  let playing = !reduce && !params.has("f");
+  let acc = 0;
+  let lastT = 0;
+  let scrubbing = false;
+
+  phaseHost.innerHTML = PHASES.map((p) =>
+    `<button type="button" data-f="${p.f}"><span>${p.key} ${p.name}</span><small>${p.time}</small></button>`
+  ).join("");
+
+  const grain = document.createElement("canvas");
+  grain.width = 160; grain.height = 160;
+  const gtx = grain.getContext("2d");
+  const img = gtx.createImageData(160, 160);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const n = 118 + Math.random() * 40;
+    img.data[i] = img.data[i + 1] = img.data[i + 2] = n;
+    img.data[i + 3] = 28;
+  }
+  gtx.putImageData(img, 0, 0);
+
+  function intParam(name, fallback) {
+    const n = parseInt(params.get(name) || "", 10);
+    return Number.isFinite(n) ? n : fallback;
+  }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function clamp01(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
+  function smoother(t) { t = clamp01(t); return t * t * (3 - 2 * t); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function v3(x, y, z) { return { x, y, z }; }
+  function sub(a, b) { return v3(a.x - b.x, a.y - b.y, a.z - b.z); }
+  function mul(a, s) { return v3(a.x * s, a.y * s, a.z * s); }
+  function dot(a, b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+  function cross(a, b) { return v3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x); }
+  function len(a) { return Math.hypot(a.x, a.y, a.z); }
+  function norm(a) { const L = len(a) || 1; return mul(a, 1 / L); }
+  function lerpV(a, b, t) { return v3(lerp(a.x, b.x, t), lerp(a.y, b.y, t), lerp(a.z, b.z, t)); }
+  function hash(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return x - Math.floor(x); }
+  function mix(a, b, t) {
+    const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16);
+    const ch = (shift) => Math.round(((A >> shift) & 255) + ((((B >> shift) & 255) - ((A >> shift) & 255)) * t));
+    return `rgb(${ch(16)},${ch(8)},${ch(0)})`;
+  }
+  function withAlpha(color, a) {
+    if (color.charAt(0) === "#") {
+      let h = color.slice(1);
+      if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+      const n = parseInt(h, 16);
+      return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+    }
+    const m = color.match(/\d+/g);
+    if (!m) return color;
+    return `rgba(${m[0]},${m[1]},${m[2]},${a})`;
+  }
+  function leafletOpenAmount(f) {
+    const phase = ((f % 30) + 30) % 30 / 30;
+    if (phase < 0.07) return smoother(phase / 0.07);
+    if (phase < 0.33) return 1;
+    if (phase < 0.45) return 1 - smoother((phase - 0.33) / 0.12);
+    return 0;
+  }
+  function cameraAt(f, w, h) {
+    let i = 0;
+    while (i < KEYS.length - 2 && f > KEYS[i + 1].f) i++;
+    const a = KEYS[i], b = KEYS[i + 1];
+    const t = smoother((f - a.f) / Math.max(1, b.f - a.f));
+    const eye = lerpV(v3(a.eye[0], a.eye[1], a.eye[2]), v3(b.eye[0], b.eye[1], b.eye[2]), t);
+    const target = lerpV(v3(a.target[0], a.target[1], a.target[2]), v3(b.target[0], b.target[1], b.target[2]), t);
+    const up0 = norm(lerpV(v3(a.up[0], a.up[1], a.up[2]), v3(b.up[0], b.up[1], b.up[2]), t));
+    const back = norm(sub(eye, target));
+    let right = cross(up0, back);
+    if (len(right) < 1e-4) right = v3(1, 0, 0);
+    right = norm(right);
+    const up = norm(cross(back, right));
+    const m = Math.min(w, h);
+    return {
+      eye, target, right, up, back,
+      fov: lerp(a.focal, b.focal, t) * m,
+      ortho: lerp(a.ortho, b.ortho, t),
+      orthoScale: lerp(a.zoom, b.zoom, t) * m,
+      clip: lerp(a.clip, b.clip, t),
+      clipY: lerp(2.6, 0.03, lerp(a.clip, b.clip, t))
+    };
+  }
+  function project(p, cam, w, h) {
+    const rel = sub(p, cam.eye);
+    const cx = dot(rel, cam.right);
+    const cy = dot(rel, cam.up);
+    const cz = dot(rel, cam.back);
+    const depth = -cz;
+    if (depth < 0.08) return null;
+    const f = cam.fov / depth;
+    let x = w / 2 + cx * f;
+    let y = h / 2 - cy * f;
+    let s = f;
+    if (cam.ortho > 0.001) {
+      x = lerp(x, w / 2 + cx * cam.orthoScale, cam.ortho);
+      y = lerp(y, h / 2 - cy * cam.orthoScale, cam.ortho);
+      s = lerp(f, cam.orthoScale, cam.ortho);
+    }
+    return { x, y, depth, s };
+  }
+  function wallRadius(z, ang) {
+    let base;
+    if (z < -0.9) base = 0.96;
+    else if (z < 0) base = lerp(0.96, 1.04, (z + 0.9) / 0.9);
+    else if (z < 1.2) base = 1.04 + 0.38 * Math.sin((z / 1.2) * Math.PI);
+    else base = lerp(1.08, 0.98, clamp01((z - 1.2) / 0.45));
+    const sinus = smoother(clamp01((z - 0.02) / 0.18)) * (1 - smoother(clamp01((z - 0.92) / 0.22)));
+    const lobes = 0.5 + 0.5 * Math.cos(3 * ang - 0.5);
+    return base * (1 + 0.15 * sinus * lobes);
+  }
+  function localExpand(v, lip, settle) {
+    const seated = lerp(0.84, 1, settle);
+    const lipUse = lip >= 0.97 ? 1 : lip;
+    if (lipUse <= 0.001) return 0;
+    if (lipUse >= 1) return seated;
+    if (v >= lipUse) return 0;
+    return smoother(clamp01((lipUse - v) / 0.14)) * seated;
+  }
+  function buildStent(lip, settle) {
+    const exp = new Array(ROWS + 1);
+    const zs = new Array(ROWS + 1);
+    for (let j = 0; j <= ROWS; j++) exp[j] = localExpand(j / ROWS, lip, settle);
+    zs[0] = 0;
+    for (let j = 0; j < ROWS; j++) zs[j + 1] = zs[j] + lerp(0.145, 0.058, (exp[j] + exp[j + 1]) * 0.5);
+    const mid = (zs[0] + zs[ROWS]) * 0.5;
+    const target = lerp(0.08, 0.2, exp[Math.floor(ROWS / 2)]);
+    for (let j = 0; j <= ROWS; j++) zs[j] = zs[j] - mid + target;
+    return { exp, zs };
+  }
+  function rowRadius(j, e) {
+    const v = j / ROWS;
+    let r = lerp(0.19, lerp(0.9, 1.02, v), e);
+    if (v < 0.1) r *= lerp(1, 1.05, smoother(clamp01((e - 0.45) / 0.55)));
+    return r;
+  }
+  function stentPoint(j, i, stent) {
+    const ang = ((i + (j % 2 ? 0.5 : 0)) / COLS) * Math.PI * 2;
+    const r = rowRadius(j, stent.exp[j]);
+    return v3(Math.cos(ang) * r, Math.sin(ang) * r, stent.zs[j]);
+  }
+  function stateAt(f) {
+    const lip = f < 150 ? 0 : f < 300 ? smoother((f - 150) / 150) : 1;
+    const settle = f < 300 ? 0 : f < 510 ? smoother((f - 300) / 210) : 1;
+    const align = f < 24 ? 0 : f < 132 ? smoother((f - 24) / 108) : 1;
+    const delivery = f < 328 ? 0 : f < 430 ? smoother((f - 328) / 102) : 1;
+    const mean = lip <= 0 ? 0 : lip * lerp(0.84, 1, settle);
+    const pin = smoother(clamp01(mean / 0.92));
+    const leafReveal = smoother(clamp01((settle - 0.22) / 0.5));
+    const gate = f < 524 ? 0 : f < 548 ? smoother((f - 524) / 24) : 1;
+    const open = leafletOpenAmount(f) * gate;
+    const flow = f < 750 ? 0 : smoother((f - 750) / 36);
+    const phase = PHASES.reduce((accP, p) => (f >= p.f ? p : accP), PHASES[0]);
+    return { lip, settle, align, delivery, mean, pin, leafReveal, open, flow, phase };
+  }
+  function prostheticPoint(cusp, u, v, openAmt) {
+    const a0 = cusp * (Math.PI * 2 / CUSP) - Math.PI / 2;
+    const ang = lerp(a0, a0 + Math.PI * 2 / CUSP, v);
+    const edge = Math.sin(v * Math.PI);
+    const seated = smoother(clamp01(Math.min(v, 1 - v) / 0.1));
+    const rAttach = 0.9;
+    const rFree = lerp(lerp(rAttach, 0.012, seated), lerp(rAttach * 0.98, rAttach * 0.52, Math.pow(edge, 0.55)), openAmt);
+    const belly = Math.sin(u * Math.PI) * edge * (1 - openAmt * 0.8);
+    const r = lerp(rFree, rAttach, u) + belly * 0.1;
+    const zNadir = lerp(0.58, 0.04, edge);
+    let z = lerp(lerp(zNadir, 0.3, 0.55), zNadir, u);
+    z -= belly * 0.22;
+    return v3(Math.cos(ang) * r, Math.sin(ang) * r, z);
+  }
+  function nativePoint(cusp, u, v, pin) {
+    const a0 = cusp * (Math.PI * 2 / CUSP) - Math.PI / 2 + 0.08;
+    const ang = lerp(a0, a0 + Math.PI * 2 / CUSP, v);
+    const edge = Math.sin(v * Math.PI);
+    const wobble = (0.05 * Math.sin(v * 15 + cusp * 2.2) + 0.03 * Math.sin(v * 7 + cusp)) * (1 - pin);
+    const rAttach = 1.08;
+    const rFree = lerp(lerp(0.34, 1.32, pin), rAttach, 1 - edge) + wobble;
+    const r = lerp(rFree, rAttach + wobble, u);
+    const z = lerp(0.08, lerp(0.42, 0.05, edge), u);
+    return v3(Math.cos(ang) * r, Math.sin(ang) * r, z);
+  }
+  function streamPos(i, sampleFrame, open) {
+    const seedA = hash(i * 1.7);
+    const seedB = hash(i * 2.3 + 4.2);
+    const span = 1.35;
+    const z = -0.2 + ((seedA * span + sampleFrame * (0.012 + open * 0.05)) % span);
+    const ang = hash(i * 3.1) * Math.PI * 2;
+    const r = Math.pow(seedB, 0.72) * lerp(0.12, 0.4, open);
+    return { p: v3(Math.cos(ang) * r, Math.sin(ang) * r, z), speed: 0.25 + open };
+  }
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const w = Math.max(2, Math.floor(rect.width * dpr));
+    const h = Math.max(2, Math.floor(rect.height * dpr));
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+  }
+  function clipPoly(pts, clipY) {
+    const out = [];
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i], b = pts[(i + 1) % pts.length];
+      const aIn = a.y <= clipY + 1e-6, bIn = b.y <= clipY + 1e-6;
+      if (aIn && bIn) out.push(b);
+      else if (aIn && !bIn) out.push(lerpV(a, b, (clipY - a.y) / (b.y - a.y || 1e-6)));
+      else if (!aIn && bIn) {
+        out.push(lerpV(a, b, (clipY - a.y) / (b.y - a.y || 1e-6)));
+        out.push(b);
+      }
+    }
+    return out;
+  }
+  function submitQuad(queue, pts, color, cam, w, h, seal) {
+    let poly = pts;
+    if (cam.clip > 0.05) {
+      poly = clipPoly(pts, cam.clipY);
+      if (poly.length < 3) return;
+    }
+    const proj = [];
+    let depth = 0;
+    for (let i = 0; i < poly.length; i++) {
+      const p = project(poly[i], cam, w, h);
+      if (!p) return;
+      proj.push(p);
+      depth += p.depth;
+    }
+    depth /= proj.length;
+    queue.push({ depth, draw() {
+      let span = 0;
+      for (let i = 0; i < proj.length; i++) {
+        const a = proj[i], b = proj[(i + 1) % proj.length];
+        span = Math.max(span, Math.hypot(a.x - b.x, a.y - b.y));
+        if (a.depth < 0.25) return;
+      }
+      if (span > Math.max(w, h) * 0.62) return;
+      ctx.beginPath();
+      ctx.moveTo(proj[0].x, proj[0].y);
+      for (let i = 1; i < proj.length; i++) ctx.lineTo(proj[i].x, proj[i].y);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+      if (seal) { ctx.strokeStyle = color; ctx.lineWidth = 1.35; ctx.stroke(); }
+    }});
+  }
+  function submitLine(queue, a, b, color, width, cam, w, h) {
+    if (cam.clip > 0.2) {
+      const aIn = a.y <= cam.clipY, bIn = b.y <= cam.clipY;
+      if (!aIn && !bIn) return;
+      if (aIn !== bIn) {
+        const hit = lerpV(a, b, (cam.clipY - a.y) / (b.y - a.y || 1e-6));
+        if (!aIn) a = hit; else b = hit;
+      }
+    }
+    const pa = project(a, cam, w, h), pb = project(b, cam, w, h);
+    if (!pa || !pb || pa.depth < 0.25 || pb.depth < 0.25) return;
+    if (Math.hypot(pa.x - pb.x, pa.y - pb.y) > Math.max(w, h) * 0.7) return;
+    const lw = width * (pa.s + pb.s) * 0.5 * 0.0062;
+    queue.push({ depth: (pa.depth + pb.depth) * 0.5, draw() {
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = Math.max(0.6, lw);
+      ctx.stroke();
+    }});
+  }
+  function drawWall(queue, cam, w, h) {
+    const ZN = 36, TN = 56, z0 = -1.25, z1 = 1.62;
+    for (let j = 0; j < ZN; j++) {
+      const za = lerp(z0, z1, j / ZN), zb = lerp(z0, z1, (j + 1) / ZN);
+      for (let i = 0; i < TN; i++) {
+        const ta = (i / TN) * Math.PI * 2, tb = ((i + 1) / TN) * Math.PI * 2;
+        const p00 = v3(Math.cos(ta) * wallRadius(za, ta), Math.sin(ta) * wallRadius(za, ta), za);
+        const p10 = v3(Math.cos(tb) * wallRadius(za, tb), Math.sin(tb) * wallRadius(za, tb), za);
+        const p11 = v3(Math.cos(tb) * wallRadius(zb, tb), Math.sin(tb) * wallRadius(zb, tb), zb);
+        const p01 = v3(Math.cos(ta) * wallRadius(zb, ta), Math.sin(ta) * wallRadius(zb, ta), zb);
+        const midA = (ta + tb) * 0.5, midZ = (za + zb) * 0.5;
+        let hole = false;
+        for (let o = 0; o < OSTIA.length; o++) {
+          const dz = midZ - OSTIA[o].z;
+          const da = Math.atan2(Math.sin(midA - OSTIA[o].ang), Math.cos(midA - OSTIA[o].ang));
+          if (dz * dz + da * da < 0.028) hole = true;
+        }
+        if (hole) continue;
+        const n = norm(cross(sub(p10, p00), sub(p01, p00)));
+        const shade = 0.62 + 0.38 * Math.pow(Math.max(0, dot(n, norm(v3(-0.3, 0.35, 0.85)))), 0.65);
+        const centroid = v3((p00.x + p11.x) * 0.5, (p00.y + p11.y) * 0.5, (p00.z + p11.z) * 0.5);
+        const facing = dot(n, norm(sub(cam.eye, centroid)));
+        let alpha = facing > 0.25 ? lerp(0.94, 0.16, smoother((facing - 0.25) / 0.55)) : 0.96;
+        if (cam.clip > 0.75) alpha = 0.98;
+        submitQuad(queue, [p00, p10, p11, p01], withAlpha(mix("#2A1820", "#4A3038", clamp01(shade)), alpha), cam, w, h, true);
+      }
+    }
+    OSTIA.forEach((o, idx) => {
+      const R = wallRadius(o.z, o.ang);
+      const center = v3(Math.cos(o.ang) * R, Math.sin(o.ang) * R, o.z);
+      const out = v3(Math.cos(o.ang) * (R + 0.28), Math.sin(o.ang) * (R + 0.28), o.z);
+      const side = norm(v3(-Math.sin(o.ang), Math.cos(o.ang), 0));
+      const up = v3(0, 0, 1);
+      for (let s = 0; s < 4; s++) {
+        for (let i = 0; i < 10; i++) {
+          const tube = (ang, along) => {
+            const base = lerpV(center, out, along);
+            const rad = 0.09;
+            return v3(
+              base.x + (Math.cos(ang) * side.x + Math.sin(ang) * up.x) * rad,
+              base.y + (Math.cos(ang) * side.y + Math.sin(ang) * up.y) * rad,
+              base.z + (Math.cos(ang) * side.z + Math.sin(ang) * up.z) * rad
+            );
+          };
+          const a0 = (i / 10) * Math.PI * 2, a1 = ((i + 1) / 10) * Math.PI * 2;
+          submitQuad(queue, [tube(a0, s / 4), tube(a1, s / 4), tube(a1, (s + 1) / 4), tube(a0, (s + 1) / 4)], idx ? "#140C12" : "#1A1016", cam, w, h, false);
+        }
+      }
+    });
+  }
+  function drawNative(queue, cam, w, h, pin) {
+    for (let c = 0; c < CUSP; c++) {
+      for (let j = 0; j < 5; j++) {
+        for (let i = 0; i < 10; i++) {
+          const u0 = j / 5, u1 = (j + 1) / 5, v0 = i / 10, v1 = (i + 1) / 10;
+          const margin = Math.pow(clamp01(1 - (u0 + u1) * 0.5), 2.4);
+          submitQuad(queue, [
+            nativePoint(c, u0, v0, pin), nativePoint(c, u0, v1, pin),
+            nativePoint(c, u1, v1, pin), nativePoint(c, u1, v0, pin)
+          ], mix("#2C1A22", CORAL, margin * 0.92), cam, w, h, false);
+        }
+      }
+      for (let k = 0; k < 7; k++) {
+        if (hash(c * 20 + k) < 0.35) continue;
+        const p = nativePoint(c, 0.04, (k + 0.5) / 7, pin);
+        const pr = project(p, cam, w, h);
+        if (!pr || (cam.clip > 0.2 && p.y > cam.clipY)) continue;
+        const rad = (0.03 + hash(k + 3) * 0.025) * pr.s;
+        queue.push({ depth: pr.depth - 0.02, draw() {
+          ctx.beginPath(); ctx.fillStyle = CORAL; ctx.arc(pr.x, pr.y, Math.max(1.4, rad), 0, Math.PI * 2); ctx.fill();
+        }});
+      }
+    }
+  }
+  function drawPlaque(queue, cam, w, h, pin) {
+    for (let i = 0; i < 28; i++) {
+      const ang = hash(i + 2) * Math.PI * 2;
+      const p = v3(Math.cos(ang) * (1.05 + hash(i + 4) * 0.16 + pin * 0.04), Math.sin(ang) * (1.05 + hash(i + 4) * 0.16), (hash(i + 9) - 0.5) * 0.16);
+      const pr = project(p, cam, w, h);
+      if (!pr || (cam.clip > 0.2 && p.y > cam.clipY)) continue;
+      const rad = (0.035 + hash(i + 8) * 0.04) * pr.s;
+      queue.push({ depth: pr.depth - 0.01, draw() {
+        ctx.beginPath(); ctx.fillStyle = i % 3 === 0 ? "#FF7A7E" : CORAL;
+        ctx.arc(pr.x, pr.y, Math.max(1.2, rad), 0, Math.PI * 2); ctx.fill();
+      }});
+    }
+  }
+  function drawLeaflets(queue, cam, w, h, openAmt, alpha) {
+    for (let c = 0; c < CUSP; c++) {
+      const shell = [];
+      for (let i = 0; i <= 24; i++) shell.push(prostheticPoint(c, 1, i / 24, openAmt));
+      for (let i = 24; i >= 0; i--) shell.push(prostheticPoint(c, 0, i / 24, openAmt));
+      submitQuad(queue, shell, withAlpha(IVORY, 0.98 * alpha), cam, w, h, false);
+      for (let k = 1; k <= 3; k++) {
+        const u = 0.18 + k * 0.18;
+        for (let i = 0; i < 16; i++) {
+          submitLine(queue, prostheticPoint(c, u, i / 16, openAmt), prostheticPoint(c, u, (i + 1) / 16, openAmt), withAlpha("#E4CBB8", 0.28 * alpha), 0.55, cam, w, h);
+        }
+      }
+    }
+    if (openAmt < 0.4) {
+      const ink = withAlpha("#2A1820", (1 - openAmt / 0.4) * 0.85 * alpha);
+      for (let c = 0; c < CUSP; c++) {
+        const ang = c * (Math.PI * 2 / CUSP) - Math.PI / 2;
+        submitLine(queue, v3(0, 0, 0.28), v3(Math.cos(ang) * 0.42, Math.sin(ang) * 0.42, 0.28), ink, 1.15, cam, w, h);
+      }
+    }
+  }
+  function drawSkirt(queue, cam, w, h, stent, alpha) {
+    const z0 = stent.zs[0], z1 = stent.zs[2];
+    for (let i = 0; i < COLS; i++) {
+      const a0 = (i / COLS) * Math.PI * 2, a1 = ((i + 1) / COLS) * Math.PI * 2;
+      const r0 = rowRadius(0, stent.exp[0]) * 0.98, r1 = rowRadius(2, stent.exp[2]) * 0.96;
+      submitQuad(queue, [
+        v3(Math.cos(a0) * r0, Math.sin(a0) * r0, z0), v3(Math.cos(a1) * r0, Math.sin(a1) * r0, z0),
+        v3(Math.cos(a1) * r1, Math.sin(a1) * r1, z1), v3(Math.cos(a0) * r1, Math.sin(a0) * r1, z1)
+      ], withAlpha("#E7D3C4", 0.9 * alpha), cam, w, h, false);
+    }
+  }
+  function drawStentLines(queue, cam, w, h, stent) {
+    const vert = (j, i) => ({ p: stentPoint(j, (i + COLS) % COLS, stent), e: stent.exp[j] });
+    const link = (A, B) => {
+      const e = Math.min(A.e, B.e);
+      const covered = e < 0.04;
+      if (!covered) submitLine(queue, A.p, B.p, withAlpha(TEAL, 0.28 * e), 4.4, cam, w, h);
+      submitLine(queue, A.p, B.p, covered ? "rgba(150,186,182,0.55)" : withAlpha(TEAL, 0.55 + 0.45 * e), covered ? 0.85 : 1.35 + e * 0.85, cam, w, h);
+    };
+    for (let j = 0; j < ROWS; j++) {
+      for (let i = 0; i < COLS; i++) {
+        const a = vert(j, i);
+        link(a, vert(j + 1, i));
+        link(a, vert(j + 1, i - 1));
+      }
+    }
+    for (let i = 0; i < COLS; i++) {
+      link(vert(0, i), vert(0, i + 1));
+      link(vert(ROWS, i), vert(ROWS, i + 1));
+    }
+  }
+  function drawTube(queue, cam, w, h, z0, z1, radius, color, steps, taper) {
+    for (let s = 0; s < 8; s++) {
+      const za = lerp(z0, z1, s / 8), zb = lerp(z0, z1, (s + 1) / 8);
+      const ra = taper ? lerp(0.02, radius, s / 8) : radius;
+      const rb = taper ? lerp(0.02, radius, (s + 1) / 8) : radius;
+      for (let i = 0; i < steps; i++) {
+        const a0 = (i / steps) * Math.PI * 2, a1 = ((i + 1) / steps) * Math.PI * 2;
+        submitQuad(queue, [
+          v3(Math.cos(a0) * ra, Math.sin(a0) * ra, za), v3(Math.cos(a1) * ra, Math.sin(a1) * ra, za),
+          v3(Math.cos(a1) * rb, Math.sin(a1) * rb, zb), v3(Math.cos(a0) * rb, Math.sin(a0) * rb, zb)
+        ], color, cam, w, h, false);
+      }
+    }
+  }
+  function drawRing(queue, cam, w, h, z, radius, color, width) {
+    for (let i = 0; i < 28; i++) {
+      const a0 = (i / 28) * Math.PI * 2, a1 = ((i + 1) / 28) * Math.PI * 2;
+      submitLine(queue, v3(Math.cos(a0) * radius, Math.sin(a0) * radius, z), v3(Math.cos(a1) * radius, Math.sin(a1) * radius, z), color, width, cam, w, h);
+    }
+  }
+  function drawDelivery(queue, cam, w, h, stent, S) {
+    const shift = S.delivery * 3.1;
+    let lipZ = stent.zs[ROWS] + 0.4 + shift;
+    for (let j = 0; j <= ROWS; j++) if (stent.exp[j] < 0.05) { lipZ = stent.zs[j] + shift; break; }
+    drawTube(queue, cam, w, h, -1.15 + shift, 2.15 + shift, 0.155, "rgba(28,36,48,0.95)", 14, false);
+    drawTube(queue, cam, w, h, -1.42 + shift, -1.12 + shift, 0.155, "rgba(40,48,58,0.95)", 8, true);
+    if (S.lip < 0.985) {
+      const capTop = Math.max(lipZ + 0.45, stent.zs[ROWS] + 0.55 + shift);
+      drawTube(queue, cam, w, h, lipZ, capTop, 0.34, "rgba(214,228,232,0.34)", 18, false);
+      drawRing(queue, cam, w, h, lipZ, 0.345, "rgba(230,224,216,0.55)", 1.4);
+    }
+    [lerp(0.95, -0.02, S.align), lerp(1.28, 0.16, S.align)].forEach((z, idx) => {
+      drawRing(queue, cam, w, h, z + shift, 0.2, withAlpha(GOLD, 0.95), 2.1);
+      const notch = lerp(0.8 + idx, 0, S.align);
+      submitLine(queue, v3(Math.cos(notch) * 0.2, Math.sin(notch) * 0.2, z + shift), v3(Math.cos(notch) * 0.3, Math.sin(notch) * 0.3, z + shift), GOLD, 1.4, cam, w, h);
+    });
+    if (S.align > 0.15 && S.delivery < 0.2) drawRing(queue, cam, w, h, 0.02, 1.08, withAlpha(GOLD, 0.18 * (0.25 + S.align * 0.75)), 0.8);
+  }
+  function drawFlow(queue, cam, w, h, f, alpha) {
+    const openNow = leafletOpenAmount(f);
+    for (let i = 0; i < 16; i++) {
+      const pts = [streamPos(i, f, openNow)];
+      for (let k = 1; k <= 7; k++) pts.push(streamPos(i, f - k * 1.6, openNow));
+      const proj = pts.map((s) => project(s.p, cam, w, h));
+      if (!proj[0]) continue;
+      const speed = pts[0].speed;
+      const col = speed > 0.75 ? "#FFB3C0" : "#FF5D73";
+      queue.push({ depth: proj[0].depth - 1.2, draw() {
+        ctx.beginPath();
+        let pen = false, last = null;
+        for (let k = 0; k < proj.length; k++) {
+          const p = proj[k];
+          const jump = p && last && Math.hypot(p.x - last.x, p.y - last.y) > w * 0.2;
+          if (!p || p.depth < 0.3 || jump) { pen = false; last = null; continue; }
+          if (!pen) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+          pen = true; last = p;
+        }
+        ctx.strokeStyle = withAlpha(col, (0.35 + speed * 0.4) * alpha);
+        ctx.lineWidth = Math.max(1.1, proj[0].s * 0.005);
+        ctx.stroke();
+      }});
+    }
+  }
+  function crossings(z, clipY) {
+    const hits = [];
+    let prev = null;
+    for (let k = 0; k <= 72; k++) {
+      const ang = (k / 72) * Math.PI * 2;
+      const r = wallRadius(z, ang);
+      const p = v3(Math.cos(ang) * r, Math.sin(ang) * r, z);
+      if (prev && (prev.y <= clipY) !== (p.y <= clipY)) hits.push(lerpV(prev, p, (clipY - prev.y) / (p.y - prev.y || 1e-6)));
+      prev = p;
+    }
+    return hits;
+  }
+  function drawCutEdge(queue, cam, w, h) {
+    const left = [], right = [];
+    for (let i = 0; i <= 36; i++) {
+      const hits = crossings(lerp(-1.2, 1.5, i / 36), cam.clipY);
+      if (hits.length < 2) continue;
+      hits.sort((a, b) => a.x - b.x);
+      left.push(hits[0]); right.push(hits[hits.length - 1]);
+    }
+    [left, right].forEach((pts) => {
+      for (let i = 0; i < pts.length - 1; i++) {
+        const a = pts[i], b = pts[i + 1];
+        submitQuad(queue, [a, b, v3(b.x * 0.86, b.y * 0.86, b.z), v3(a.x * 0.86, a.y * 0.86, a.z)], "#4A3038", cam, w, h, false);
+        submitLine(queue, v3(a.x * 0.86, a.y * 0.86, a.z), v3(b.x * 0.86, b.y * 0.86, b.z), "rgba(255,241,230,0.45)", 1.3, cam, w, h);
+      }
+    });
+  }
+  function callout(world, text, ox, oy, cam, w, h) {
+    const p = project(world, cam, w, h);
+    if (!p || p.x < 40 || p.y < 30 || p.x > w - 40 || p.y > h - 30) return null;
+    const dpr = Math.max(1, w / Math.max(1, canvas.clientWidth));
+    const tw = ctx.measureText(text).width;
+    return { ax: p.x, ay: p.y, lx: p.x + ox * dpr, ly: p.y + oy * dpr, tx: p.x + ox * dpr + (ox < 0 ? -tw - 6 : 6), ty: p.y + oy * dpr + 4, text };
+  }
+  function drawCallouts(w, h, cam, stent, S) {
+    const dpr = Math.max(1, w / Math.max(1, canvas.clientWidth));
+    ctx.save();
+    ctx.font = `${12 * dpr}px ui-monospace, Menlo, Consolas, monospace`;
+    ctx.fillStyle = "rgba(230,224,216,0.86)";
+    ctx.strokeStyle = "rgba(230,224,216,0.45)";
+    ctx.lineWidth = dpr;
+    const items = [];
+    if (S.phase.f === 0) {
+      items.push(callout(v3(0.2, 0, 1.4), "14F catheter", 70, -36, cam, w, h));
+      items.push(callout(v3(0.9, 0.2, 0.05), "Stenotic cusp", 78, 28, cam, w, h));
+      items.push(callout(v3(0.22, 0, lerp(1.1, 0.16, S.align)), "Marker band", -86, -28, cam, w, h));
+    } else if (S.phase.f === 150) {
+      items.push(callout(v3(0.36, 0, stent.zs[ROWS] + 0.2), "Capsule", 80, -20, cam, w, h));
+      items.push(callout(stentPoint(4, 2, stent), "Nitinol cell", -90, 24, cam, w, h));
+    } else if (S.phase.f === 300) {
+      items.push(callout(v3(1.35, 0.02, 0.48), "Sinus of Valsalva", 64, -8, cam, w, h));
+      items.push(callout(v3(-1.15, 0.02, 0.12), "Annular plaque", -78, 26, cam, w, h));
+      items.push(callout(v3(Math.cos(OSTIA[0].ang) * 1.28, Math.sin(OSTIA[0].ang) * 1.28, OSTIA[0].z), "Coronary ostium", 36, -28, cam, w, h));
+    } else if (S.phase.f === 510) {
+      items.push(callout(prostheticPoint(0, 0.2, 0.5, S.open), S.open > 0.55 ? "Systole" : "Coaptation", 96, -36, cam, w, h));
+      items.push(callout(v3(0.72, 0.55, 0.32), "Pericardial cusp", 24, 72, cam, w, h));
+    } else {
+      items.push(callout(v3(0, 0, 0.7), "Prosthetic lumen", 70, -28, cam, w, h));
+      items.push(callout(v3(0.2, 0, -0.35), "Streamlines", -80, 20, cam, w, h));
+    }
+    items.forEach((it) => {
+      if (!it) return;
+      ctx.beginPath(); ctx.moveTo(it.ax, it.ay); ctx.lineTo(it.lx, it.ly); ctx.stroke();
+      ctx.fillText(it.text, it.tx, it.ty);
+    });
+    ctx.restore();
+  }
+  function render(f) {
+    resize();
+    const w = canvas.width, h = canvas.height;
+    if (w < 2 || h < 2) return;
+    const S = stateAt(f);
+    const cam = cameraAt(f, w, h);
+    const stent = buildStent(S.lip, S.settle);
+    const queue = [];
+    ctx.fillStyle = INK; ctx.fillRect(0, 0, w, h);
+    const origin = project(v3(0, 0, 0.1), cam, w, h) || { x: w / 2, y: h / 2 };
+    const g = ctx.createRadialGradient(origin.x, origin.y, 20, origin.x, origin.y, Math.max(w, h) * 0.62);
+    g.addColorStop(0, "#16131a"); g.addColorStop(0.45, "#100e14"); g.addColorStop(1, INK);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    drawWall(queue, cam, w, h);
+    drawPlaque(queue, cam, w, h, S.pin);
+    drawNative(queue, cam, w, h, S.pin);
+    if (S.leafReveal > 0.02) drawLeaflets(queue, cam, w, h, S.open, S.leafReveal);
+    if (S.leafReveal > 0.4) drawSkirt(queue, cam, w, h, stent, S.leafReveal);
+    drawStentLines(queue, cam, w, h, stent);
+    if (S.delivery < 0.98) drawDelivery(queue, cam, w, h, stent, S);
+    if (S.flow > 0.02) drawFlow(queue, cam, w, h, f, S.flow);
+    if (cam.clip > 0.62) drawCutEdge(queue, cam, w, h);
+    queue.sort((a, b) => b.depth - a.depth);
+    for (let i = 0; i < queue.length; i++) queue[i].draw();
+    drawCallouts(w, h, cam, stent, S);
+    const vg = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.35, w / 2, h / 2, Math.max(w, h) * 0.72);
+    vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,0.45)");
+    ctx.fillStyle = vg; ctx.fillRect(0, 0, w, h);
+    ctx.save(); ctx.globalAlpha = 0.16; ctx.fillStyle = ctx.createPattern(grain, "repeat"); ctx.fillRect(0, 0, w, h); ctx.restore();
+    const total = f / FPS;
+    tcEl.textContent = `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(Math.floor(total % 60)).padStart(2, "0")}:${String(f % FPS).padStart(2, "0")}`;
+    frEl.textContent = `FRAME ${String(f).padStart(4, "0")} / 1019`;
+    detailEl.innerHTML = `<strong>${S.phase.key} ${S.phase.name}.</strong> ${S.phase.detail}`;
+    metricEl.textContent = `Draw parameter · expansion ${(S.mean * 100).toFixed(0)}% · leaflet ${(S.open * 100).toFixed(0)}% · ${f >= 510 ? (S.open > 0.55 ? "systole" : "diastole") : "delivery"} · keyboard: space, arrows, 1–5`;
+    if (!scrubbing) scrub.value = String(f);
+    playBtn.textContent = playing ? "Pause" : "Play";
+    phaseHost.querySelectorAll("button").forEach((btn) => btn.classList.toggle("on", Number(btn.dataset.f) === S.phase.f));
+  }
+  function seek(next) { frame = clamp(next, 0, LAST); playing = false; acc = 0; render(frame); }
+  function loop(now) {
+    if (!lastT) lastT = now;
+    const dt = Math.min(100, now - lastT);
+    lastT = now;
+    if (playing) {
+      acc += dt;
+      const step = 1000 / FPS;
+      while (acc >= step) {
+        acc -= step;
+        if (frame >= LAST) { playing = false; acc = 0; break; }
+        frame += 1;
+      }
+      render(frame);
+    }
+    requestAnimationFrame(loop);
+  }
+  playBtn.addEventListener("click", () => { if (frame >= LAST) frame = 0; playing = !playing; acc = 0; render(frame); });
+  replayBtn.addEventListener("click", () => { frame = 0; playing = !reduce; acc = 0; render(frame); });
+  scrub.addEventListener("pointerdown", () => { scrubbing = true; playing = false; });
+  scrub.addEventListener("pointerup", () => { scrubbing = false; });
+  scrub.addEventListener("input", () => seek(Number(scrub.value)));
+  phaseHost.addEventListener("click", (e) => { const btn = e.target.closest("button"); if (btn) seek(Number(btn.dataset.f)); });
+  canvas.addEventListener("click", () => { if (frame >= LAST) frame = 0; playing = !playing; render(frame); });
+  window.addEventListener("keydown", (e) => {
+    if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON")) return;
+    if (e.code === "Space") { e.preventDefault(); playBtn.click(); }
+    else if (e.code === "ArrowRight") seek(frame + (e.shiftKey ? 15 : 1));
+    else if (e.code === "ArrowLeft") seek(frame - (e.shiftKey ? 15 : 1));
+    else if (e.code === "Home") seek(0);
+    else if (e.code === "End") seek(LAST);
+    else if (e.key >= "1" && e.key <= "5") seek(PHASES[Number(e.key) - 1].f);
+  });
+  window.addEventListener("resize", () => render(frame));
+  window.addEventListener("error", (e) => { errEl.textContent = e.message || "Render error"; });
+  window.__valve = { render, stateAt };
+  try { render(frame); } catch (err) { errEl.textContent = err && err.message ? err.message : String(err); }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
