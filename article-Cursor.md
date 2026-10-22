@@ -10,7 +10,7 @@
 - Canonical film: https://mizcausevic-dev.github.io/tavr-deployment-jig/
 - Source: https://github.com/mizcausevic-dev/tavr-deployment-jig
 - Draft date: 22 October 2026
-- Byline: Miz Causevic, Kinetic Gain. I drew the jig. I am not claiming a clinical credential, and this piece is not medical advice.
+- Byline: Miz Causevic, Kinetic Gain. The jig was drawn for this piece. No clinical credential is claimed, and this piece is not medical advice.
 
 ---
 
@@ -112,7 +112,7 @@ Open the film. Then:
 5. A frame in the open half of a later cycle, for example around frame 636 if you want systole in the down-bore section, should show a triangular orifice rather than a Y.
 6. `?f=996` should show the three-quarter root, one cusp sail, and pink lines crossing the frame. The lines are straight. That is the schematic, not a rendering error.
 
-If a still disagrees with that list, the still wins and the copy should change. I checked frames 40, 400, 660, and 996 in headless Chrome at 1440 by 900 on 22 October 2026, from the file that was published with this draft. Frames 220 and 636 are described from the same function, not from a second screenshot pass.
+If a still disagrees with that list, the still wins and the copy should change. Stills of frames 40, 400, 660, and 996 were captured in headless Chrome at 1440 by 900 on 22 October 2026 from this file, before the title punctuation edit. Frames 220 and 636 are described from the same drawing function, not from a second screenshot pass.
 
 ## What I would build next, and what I would not
 
